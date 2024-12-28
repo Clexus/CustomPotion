@@ -1,0 +1,9 @@
+name: CustomPotion
+version: '1.0-SNAPSHOT'
+main: cn.clexus.customPotion.CustomPotion
+api-version: '1.21'
+commands:
+  customeffect:
+    description: "custom effect"
+    usage: "/customeffect"
+    permission: customeffect.use
