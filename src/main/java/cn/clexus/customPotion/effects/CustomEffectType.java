@@ -6,7 +6,12 @@ public abstract class CustomEffectType {
     private final String id;
     private final String displayName;
 
-    public static final CustomEffectType LIGHTNING = getEffectType("lightning");
+    public static CustomEffectType LIGHTNING;
+    public static CustomEffectType POISON;
+    public static void initializeStaticFields() {
+        POISON = EffectRegistry.getById("poison");
+        LIGHTNING = EffectRegistry.getById("lightning");
+    }
 
     public CustomEffectType(String id, String displayName) {
         this.id = id;
@@ -31,11 +36,6 @@ public abstract class CustomEffectType {
      */
     public abstract void applyEffect(LivingEntity entity, CustomEffect effect);
 
-    /**
-     * 默认持续时间（可选）
-     */
-    public int getDefaultDuration() {
-        return 200;
-    }
+    public abstract void onRemove(LivingEntity entity, CustomEffect effect);
 }
 

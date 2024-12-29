@@ -7,3 +7,4 @@ commands:
     description: "custom effect"
     usage: "/customeffect"
     permission: customeffect.use
+depend: [packetevents]

@@ -1,6 +1,0 @@
-name: CustomPotion
-version: '1.0'
-main: cn.clexus.customPotion.CustomPotion
-description: Custom Potion
-api-version: '1.21'
-bootstrapper: cn.clexus.customPotion.BootStrap

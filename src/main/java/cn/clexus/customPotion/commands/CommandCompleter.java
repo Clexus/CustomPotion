@@ -1,6 +1,5 @@
 package cn.clexus.customPotion.commands;
 
-import cn.clexus.customPotion.effects.CustomEffectType;
 import cn.clexus.customPotion.effects.EffectRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -40,6 +39,7 @@ public class CommandCompleter implements TabCompleter {
         } else if (args.length == 6 && args[0].equalsIgnoreCase("modify")) {
             // 提供叠加状态补全：true 和 false
             completions.add("replace");
+            completions.add("normal");
             completions.add("add_all");
             completions.add("add_time");
             completions.add("add_amplifier");

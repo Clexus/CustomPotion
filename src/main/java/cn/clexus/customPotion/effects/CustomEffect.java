@@ -9,6 +9,7 @@ public class CustomEffect {
     private final CustomEffectType effectType;
     private int duration;
     private int amplifier;
+    private boolean isHidden;
     private LivingEntity source;
 
     public CustomEffect(CustomEffectType effectType, int duration, int amplifier, @Nullable LivingEntity source) {
@@ -37,6 +38,14 @@ public class CustomEffect {
 
     public boolean isFrozen() {
         return isFrozen;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        isHidden = hidden;
     }
 
     public int getDuration() {
@@ -69,7 +78,7 @@ public class CustomEffect {
     public boolean tick() {
         if(!isFrozen) {
             duration--;
-            return duration > 0;
+            return duration > 0 && amplifier > 0;
         }else return false;
     }
 
@@ -77,8 +86,11 @@ public class CustomEffect {
      * 应用效果
      */
     public void apply(LivingEntity entity) {
-        if(!isFrozen()){
+        if(!isFrozen()&&!isHidden()) {
             effectType.applyEffect(entity, getEffect());
         }
+    }
+    public void remove(LivingEntity entity) {
+        effectType.onRemove(entity, getEffect());
     }
 }
