@@ -20,12 +20,7 @@ public class PoisonEffect extends CustomEffectType {
     public void applyEffect(LivingEntity entity, CustomEffect effect) {
         int amplifier = effect.getAmplifier();
         LivingEntity source = effect.getSource();
-
-        if(effect.getDuration()>1){
-            sendPacket(entity);
-        }else{
-            onRemove(entity, effect);
-        }
+        sendPacket(entity);
         DamageUtil.damage(amplifier, DamageType.INDIRECT_MAGIC, entity, source, effect, effect1 -> effect1.setAmplifier(amplifier-1),null,null);
     }
     @Override

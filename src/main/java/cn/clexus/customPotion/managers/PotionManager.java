@@ -127,6 +127,7 @@ public class PotionManager {
                                         break;
                                     }
                                 }
+                                effect.remove(entity[0]);
                                 return true; // 移除当前效果
                             }
                         }
