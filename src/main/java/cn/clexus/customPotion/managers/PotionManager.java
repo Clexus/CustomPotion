@@ -1,8 +1,8 @@
 package cn.clexus.customPotion.managers;
 
-import cn.clexus.customPotion.Events.CustomPotionAddEvent;
-import cn.clexus.customPotion.Events.CustomPotionApplyEvent;
-import cn.clexus.customPotion.Events.CustomPotionRemoveEvent;
+import cn.clexus.customPotion.events.CustomPotionAddEvent;
+import cn.clexus.customPotion.events.CustomPotionApplyEvent;
+import cn.clexus.customPotion.events.CustomPotionRemoveEvent;
 import cn.clexus.customPotion.effects.CustomEffect;
 import cn.clexus.customPotion.effects.CustomEffectType;
 import cn.clexus.customPotion.effects.StackingModes;
@@ -30,7 +30,7 @@ public class PotionManager {
         boolean replaced = false;
         for (int i = 0; i < effects.size(); i++) {
             CustomEffect current = effects.get(i);
-            if (current.getEffectType().equals(effect.getEffectType())) {
+            if (current.getType().equals(effect.getType())) {
                 switch (stackingMode) {
                     case NORMAL:
                         if (effect.getAmplifier() > current.getAmplifier()) {
@@ -69,13 +69,18 @@ public class PotionManager {
             effects.add(effect);
         }
     }
+
+    public static boolean hasEffect(LivingEntity entity, CustomEffectType type) {
+        return !getEffects(entity, type).isEmpty();
+    }
+
     public static List<CustomEffect> getEffects(LivingEntity entity, CustomEffectType effectType) {
         List<CustomEffect> effects = activeEffects.get(entity.getUniqueId());
         List<CustomEffect> matchingEffects = new ArrayList<>();
 
         if (effects != null) {
             for (CustomEffect effect : effects) {
-                if (effect.getEffectType().equals(effectType)) {
+                if (effect.getType().equals(effectType)) {
                     matchingEffects.add(effect);
                 }
             }
@@ -84,7 +89,9 @@ public class PotionManager {
     }
 
     public static List<CustomEffect> getAllEffects(LivingEntity entity) {
-        return activeEffects.get(entity.getUniqueId());
+        if(activeEffects.get(entity.getUniqueId())==null){
+            return new ArrayList<>();
+        }else return activeEffects.get(entity.getUniqueId());
     }
 
     public static void startEffectProcessor(JavaPlugin plugin) {
@@ -122,7 +129,7 @@ public class PotionManager {
                             if (!effect.tick()) { // 持续时间耗尽
                                 // 当前效果结束，检查是否有隐藏的同类型效果
                                 for (CustomEffect hiddenEffect : effects) {
-                                    if (hiddenEffect.isHidden() && hiddenEffect.getEffectType().equals(effect.getEffectType())) {
+                                    if (hiddenEffect.isHidden() && hiddenEffect.getType().equals(effect.getType())) {
                                         hiddenEffect.setHidden(false); // 恢复隐藏效果
                                         break;
                                     }
@@ -148,7 +155,7 @@ public class PotionManager {
         LivingEntity entity = (LivingEntity) Bukkit.getEntity(uuid);
         if (effects != null) {
             effects.removeIf(effect -> {
-                if (effect.getEffectType().equals(effectType)) {
+                if (effect.getType().equals(effectType)) {
                     CustomPotionRemoveEvent event = new CustomPotionRemoveEvent(entity,effect);
                     Bukkit.getPluginManager().callEvent(event);
                     if(event.isCancelled()) {

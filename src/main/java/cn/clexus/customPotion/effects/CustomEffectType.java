@@ -8,9 +8,24 @@ public abstract class CustomEffectType {
 
     public static CustomEffectType LIGHTNING;
     public static CustomEffectType POISON;
+    public static CustomEffectType DEATH;
+    public static CustomEffectType REVEALING;
+    public static CustomEffectType REFLECTION;
+    public static CustomEffectType VIGOR;
+    public static CustomEffectType SUNSHINE;
+    public static CustomEffectType MOONSHINE;
+
+
+
     public static void initializeStaticFields() {
+        DEATH = EffectRegistry.getById("death");
         POISON = EffectRegistry.getById("poison");
         LIGHTNING = EffectRegistry.getById("lightning");
+        REVEALING = EffectRegistry.getById("revealing");
+        REFLECTION = EffectRegistry.getById("reflection");
+        VIGOR = EffectRegistry.getById("vigor");
+        SUNSHINE = EffectRegistry.getById("sunshine");
+        MOONSHINE = EffectRegistry.getById("moonshine");
     }
 
     public CustomEffectType(String id, String displayName) {

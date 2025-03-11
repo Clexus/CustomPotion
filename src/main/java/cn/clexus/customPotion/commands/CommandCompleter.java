@@ -26,18 +26,14 @@ public class CommandCompleter implements TabCompleter {
             // 提供目标补全：玩家名或实体 UUID
             completions.addAll(Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
-                    .collect(Collectors.toList()));
+                    .toList());
         } else if (args.length == 3 && args[0].equalsIgnoreCase("modify")) {
-            // 提供药水效果类型补全
             completions.addAll(EffectRegistry.getAllEffects().keySet());
         } else if (args.length == 4 && args[0].equalsIgnoreCase("modify")) {
-            // 提供等级补全
-            completions.add("1");
-        } else if (args.length == 5 && args[0].equalsIgnoreCase("modify")) {
-            // 提供持续时间补全（单位：tick）
             completions.add("200");
+        } else if (args.length == 5 && args[0].equalsIgnoreCase("modify")) {
+            completions.add("1");
         } else if (args.length == 6 && args[0].equalsIgnoreCase("modify")) {
-            // 提供叠加状态补全：true 和 false
             completions.add("replace");
             completions.add("normal");
             completions.add("add_all");

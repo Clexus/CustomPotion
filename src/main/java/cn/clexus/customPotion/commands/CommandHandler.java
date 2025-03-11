@@ -42,8 +42,8 @@ public class CommandHandler implements CommandExecutor {
         // 检查参数长度，至少需要 3 个参数（目标、效果类型）
         if (args.length < 3) {
             if (shouldSendFeedback(sender)) {
-                sender.sendMessage("Usage: /customeffect modify <UUID/玩家名> <类型> [等级] [时长] [叠加状态/来源]");
-                sender.sendMessage("Usage: /customeffect modify <UUID/玩家名> <类型> [等级] [时长] [叠加状态] [来源]");
+                sender.sendMessage("Usage: /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态/来源]");
+                sender.sendMessage("Usage: /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态] [来源]");
             }
             return true;
         }
@@ -54,8 +54,8 @@ public class CommandHandler implements CommandExecutor {
             String effectTypeName = args[2];
 
             // 默认值处理
-            int level = args.length > 3 ? Integer.parseInt(args[3]) : 1; // 默认等级为 1
-            int duration = args.length > 4 ? Integer.parseInt(args[4]) : 200; // 默认持续时间为 200
+            int duration = args.length > 3 ? Integer.parseInt(args[3]) : 200; // 默认等级为 1
+            int level = args.length > 4 ? Integer.parseInt(args[4]) : 1; // 默认持续时间为 200
 
             // 验证等级和持续时间必须大于 0
             if (level <= 0) {

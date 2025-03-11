@@ -23,7 +23,7 @@ public class CustomEffect {
         return CustomEffect.this;
     }
 
-    public CustomEffectType getEffectType() {
+    public CustomEffectType getType() {
         return effectType;
     }
 

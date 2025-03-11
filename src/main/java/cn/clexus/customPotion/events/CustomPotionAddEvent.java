@@ -1,4 +1,4 @@
-package cn.clexus.customPotion.Events;
+package cn.clexus.customPotion.events;
 
 import cn.clexus.customPotion.effects.CustomEffect;
 import cn.clexus.customPotion.effects.StackingModes;
@@ -33,6 +33,10 @@ public class CustomPotionAddEvent extends Event implements Cancellable {
 
     @Override
     public @NotNull HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 

@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRemoveEntityEffect;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 public class PoisonEffect extends CustomEffectType {
 
@@ -20,13 +21,17 @@ public class PoisonEffect extends CustomEffectType {
     public void applyEffect(LivingEntity entity, CustomEffect effect) {
         int amplifier = effect.getAmplifier();
         LivingEntity source = effect.getSource();
-        sendPacket(entity);
+        if(entity instanceof Player){
+            sendPacket(entity);
+        }
         DamageUtil.damage(amplifier, DamageType.INDIRECT_MAGIC, entity, source, effect, effect1 -> effect1.setAmplifier(amplifier-1),null,null);
     }
     @Override
     public void onRemove(LivingEntity entity, CustomEffect effect) {
-        WrapperPlayServerRemoveEntityEffect removePacket = new WrapperPlayServerRemoveEntityEffect(entity.getEntityId(), PotionTypes.POISON);
-        PacketEvents.getAPI().getPlayerManager().sendPacket(entity, removePacket);
+        if(entity instanceof Player){
+            WrapperPlayServerRemoveEntityEffect removePacket = new WrapperPlayServerRemoveEntityEffect(entity.getEntityId(), PotionTypes.POISON);
+            PacketEvents.getAPI().getPlayerManager().sendPacket(entity, removePacket);
+        }
     }
     public void sendPacket(LivingEntity entity) {
         WrapperPlayServerEntityEffect addPacket = new WrapperPlayServerEntityEffect(entity.getEntityId(), PotionTypes.POISON,0,10, (byte) 0);

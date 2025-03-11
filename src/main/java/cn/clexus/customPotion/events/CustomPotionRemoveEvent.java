@@ -1,4 +1,4 @@
-package cn.clexus.customPotion.Events;
+package cn.clexus.customPotion.events;
 
 import cn.clexus.customPotion.effects.CustomEffect;
 import org.bukkit.entity.LivingEntity;
@@ -7,15 +7,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class CustomPotionApplyEvent extends Event implements Cancellable {
+public class CustomPotionRemoveEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private LivingEntity entity;
-    private CustomEffect effect;
+    private final CustomEffect effect;
+    private final LivingEntity entity;
 
-    public CustomPotionApplyEvent(LivingEntity entity, CustomEffect effect) {
-        this.entity = entity;
+    public CustomPotionRemoveEvent(LivingEntity entity, CustomEffect effect) {
         this.effect = effect;
+        this.entity = entity;
     }
 
     @Override
@@ -33,6 +33,10 @@ public class CustomPotionApplyEvent extends Event implements Cancellable {
         return handlers;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public CustomEffect getEffect() {
         return effect;
     }
@@ -41,11 +45,4 @@ public class CustomPotionApplyEvent extends Event implements Cancellable {
         return entity;
     }
 
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
-    public void setEffect(CustomEffect effect) {
-        this.effect = effect;
-    }
 }
