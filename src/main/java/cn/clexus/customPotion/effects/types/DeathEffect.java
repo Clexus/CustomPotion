@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class DeathEffect extends CustomEffectType {
     public DeathEffect() {
-        super("death","终焉");
+        super("death");
     }
 
     @Override

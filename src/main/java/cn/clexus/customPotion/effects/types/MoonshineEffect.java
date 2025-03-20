@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class MoonshineEffect extends CustomEffectType implements DamageModifierEffectType {
     public MoonshineEffect() {
-        super("moonshine","月华");
+        super("moonshine");
     }
     @Override
     public void applyEffect(LivingEntity entity, CustomEffect effect) {
@@ -24,7 +24,7 @@ public class MoonshineEffect extends CustomEffectType implements DamageModifierE
         if(EventsUtil.getDamager(event)!=null){
             LivingEntity damager = EventsUtil.getDamager(event);
             if(EventsUtil.damagerHasEffect(event, CustomEffectType.MOONSHINE) && ( damager.getWorld().getTime()<1000 || damager.getWorld().getTime()>13000 )){
-                event.setDamage(event.getFinalDamage()*(1+effect.getAmplifier()/100.0));
+                event.setDamage(event.getFinalDamage()+effect.getAmplifier());
             }
         }
     }

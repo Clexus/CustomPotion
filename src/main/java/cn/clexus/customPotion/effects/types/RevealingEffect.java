@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class RevealingEffect extends CustomEffectType implements DamageModifierEffectType {
     public RevealingEffect() {
-        super("revealing","破隐");
+        super("revealing");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class RevealingEffect extends CustomEffectType implements DamageModifierE
     public void modifyDamage(EntityDamageEvent event, CustomEffect effect) {
         if(event.getEntity() instanceof LivingEntity livingEntity && EventsUtil.damagerHasEffect(event, CustomEffectType.REVEALING)){
             if(livingEntity.hasPotionEffect(PotionEffectType.INVISIBILITY)){
-                event.setDamage(event.getFinalDamage()*(1+effect.getAmplifier()/100.0));
+                event.setDamage(event.getFinalDamage()+effect.getAmplifier());
             }
         }
     }

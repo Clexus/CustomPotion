@@ -7,4 +7,5 @@ commands:
     description: "custom effect"
     usage: "/customeffect"
     permission: customeffect.use
-depend: [packetevents, MythicMobs]
+depend: [ packetevents ]
+soft-depend: [ MythicMobs, PlaceholderAPI ]

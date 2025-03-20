@@ -1,0 +1,28 @@
+message:
+  command:
+    unknown_subcommand: "<red>未知子命令: %command%"
+    unknown_effect: "<red>未知效果: %type%"
+    invalid_number: "<red>等级和时长需要为有效整数"
+    invalid_argument: "<red>无效参数"
+    invalid_stacking_mode: "<red>无效的叠加状态，可用状态有: NORMAL, REPLACE, ADD_ALL, ADD_TIME, ADD_AMPLIFIER"
+    0_args: "使用方法: /customeffect <modify|clear> ..."
+    clear_2_args: "使用方法: /customeffect clear <UUID/玩家名> [类型]"
+    modify_3_args_1: "使用方法: /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态/来源]"
+    modify_3_args_2: "使用方法: /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态] [来源]"
+    level_lower_than_0: "<red>等级需要大于0"
+    duration_lower_than_0: "<red>时长需要大于0"
+    not_found: "<red>未找到对应玩家或实体"
+    applied: "已将%level%级%type%效果应用于%name%，持续%duration%刻"
+    cleared: "已清除%name%的%type%效果"
+    cleared_all: "已清除%name%的所有效果"
+
+display-names:
+  death: "终焉"
+  lightning: "雷霆"
+  moonshine: "月华"
+  poison: "剧毒"
+  reflection: "反射"
+  revealing: "破隐"
+  sunshine: "晴光"
+  vigor: "活力"
+  spin: "旋转"

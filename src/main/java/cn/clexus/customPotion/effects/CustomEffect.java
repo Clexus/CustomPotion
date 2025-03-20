@@ -64,6 +64,7 @@ public class CustomEffect {
         this.amplifier = amplifier;
     }
 
+    @Nullable
     public LivingEntity getSource() {
         return source;
     }

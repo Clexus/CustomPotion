@@ -1,5 +1,6 @@
 package cn.clexus.customPotion.effects;
 
+import cn.clexus.customPotion.utils.I18n;
 import org.bukkit.entity.LivingEntity;
 
 public abstract class CustomEffectType {
@@ -14,7 +15,9 @@ public abstract class CustomEffectType {
     public static CustomEffectType VIGOR;
     public static CustomEffectType SUNSHINE;
     public static CustomEffectType MOONSHINE;
-
+    public static CustomEffectType SPIN;
+    public static CustomEffectType ANGER;
+    public static CustomEffectType REVERSE;
 
 
     public static void initializeStaticFields() {
@@ -26,11 +29,14 @@ public abstract class CustomEffectType {
         VIGOR = EffectRegistry.getById("vigor");
         SUNSHINE = EffectRegistry.getById("sunshine");
         MOONSHINE = EffectRegistry.getById("moonshine");
+        SPIN = EffectRegistry.getById("spin");
+        ANGER = EffectRegistry.getById("anger");
+        REVERSE = EffectRegistry.getById("reverse");
     }
 
-    public CustomEffectType(String id, String displayName) {
+    public CustomEffectType(String id) {
         this.id = id;
-        this.displayName = displayName;
+        this.displayName = I18n.getEffectDisplayName(id);
         EffectRegistry.register(this);
     }
 

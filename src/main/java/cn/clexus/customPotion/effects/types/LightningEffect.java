@@ -8,14 +8,12 @@ import org.bukkit.entity.LivingEntity;
 
 public class LightningEffect extends CustomEffectType {
     public LightningEffect() {
-        super("lightning","雷霆");
+        super("lightning");
     }
     @Override
     public void applyEffect(LivingEntity target, CustomEffect effect) {
-        int amplifier = effect.getAmplifier();
         LivingEntity source = effect.getSource();
-        double damage = amplifier * 5.0;
-        DamageUtil.damage(damage, DamageType.LIGHTNING_BOLT,target,source,effect,null,target1->target1.getWorld().strikeLightningEffect(target.getLocation()),null);
+        DamageUtil.damage(effect.getAmplifier(), DamageType.LIGHTNING_BOLT,target,source,effect,null,target1->target1.getWorld().strikeLightningEffect(target.getLocation()),null);
     }
 
     @Override

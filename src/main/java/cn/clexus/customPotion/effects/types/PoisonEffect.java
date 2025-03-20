@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class PoisonEffect extends CustomEffectType {
 
     public PoisonEffect() {
-        super("poison","剧毒");
+        super("poison");
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class ReflectionEffect extends CustomEffectType implements DamageModifierEffectType {
     public ReflectionEffect() {
-        super("reflection","反射");
+        super("reflection");
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ReflectionEffect extends CustomEffectType implements DamageModifier
             if(PotionManager.hasEffect(victim, CustomEffectType.REFLECTION)){
                 if(EventsUtil.getDamager(event)!=null){
                     LivingEntity damager = EventsUtil.getDamager(event);
-                    damager.damage(event.getFinalDamage()*effect.getAmplifier()/100, DamageSource.builder(DamageType.THORNS).withDirectEntity(victim).build());
+                    damager.damage(effect.getAmplifier(), DamageSource.builder(DamageType.THORNS).withDirectEntity(victim).build());
                 }
             }
         }

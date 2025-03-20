@@ -1,6 +1,6 @@
 plugins {
     id "java-library"
-    id "io.papermc.paperweight.userdev" version "2.0.0-beta.14"
+    id "io.papermc.paperweight.userdev" version "2.0.0-beta.16"
     id 'com.gradleup.shadow' version '9.0.0-beta4'
 }
 
@@ -10,7 +10,9 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
-
+    maven {
+        url = 'https://repo.extendedclip.com/releases/'
+    }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven {
         name = "papermc-repo"
@@ -27,12 +29,17 @@ repositories {
 shadowJar {
     archiveClassifier.set('')
     relocate 'org.reflections', 'cn.clexus.customPotion.shadow.reflections'
+    relocate("org.bstats", "cn.clexus.customPotion.shadow.bstats")
+    exclude("images/**")
+    exclude("licenses/**")
     minimize()
 }
 
 dependencies {
     compileOnly 'io.lumine:Mythic-Dist:5.8.0'
     compileOnly("com.github.retrooper:packetevents-spigot:2.7.0")
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
     implementation 'com.gradleup.shadow:shadow-gradle-plugin:9.0.0-beta4'
     implementation 'org.reflections:reflections:0.10.2'
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")

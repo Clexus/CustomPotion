@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class SunshineEffect extends CustomEffectType implements DamageModifierEffectType {
     public SunshineEffect() {
-        super("sunshine","晴光");
+        super("sunshine");
     }
     @Override
     public void applyEffect(LivingEntity entity, CustomEffect effect) {
@@ -24,7 +24,7 @@ public class SunshineEffect extends CustomEffectType implements DamageModifierEf
         if(EventsUtil.getDamager(event)!=null){
             LivingEntity damager = EventsUtil.getDamager(event);
             if(EventsUtil.damagerHasEffect(event, CustomEffectType.SUNSHINE) && damager.getWorld().getTime()>=1000 && damager.getWorld().getTime()<=13000){
-                event.setDamage(event.getFinalDamage()*(1+effect.getAmplifier()/100.0));
+                event.setDamage(event.getFinalDamage()+effect.getAmplifier());
             }
         }
     }
