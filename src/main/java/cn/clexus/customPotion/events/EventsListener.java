@@ -80,6 +80,9 @@ public class EventsListener implements Listener {
         // 异步保存
         if (!effects.isEmpty()) {
             CustomPotion.databaseManager.savePlayerEffects(player.getUniqueId(), effects);
+        } else {
+            // 如果没有效果，清除数据库中的数据
+            CustomPotion.databaseManager.clearPlayerEffects(player.getUniqueId());
         }
     }
 }
