@@ -23,21 +23,22 @@ public class CustomEffectMechanic extends SkillMechanic implements ITargetedEnti
     private int duration;
     private int level;
     private StackingModes stackingMode;
+
     public CustomEffectMechanic(SkillExecutor manager, File file, String line, MythicLineConfig mlc) {
         super(manager, file, line, mlc);
         this.line = line;
         this.threadSafetyLevel = ThreadSafetyLevel.EITHER;
 
-        this.effectName = mlc.getString(new String[] { "effect" , "e", "type", "t"}, "poison");
-        this.duration = mlc.getInteger(new String[]{ "duration", "d"}, 1);
-        this.level = mlc.getInteger(new String[]{ "level", "l"}, 1);
-        this.stackingMode = mlc.getEnum(new String[]{ "stackingmode", "sm", "s"}, StackingModes.class, StackingModes.NORMAL);
+        this.effectName = mlc.getString(new String[]{"effect", "e", "type", "t"}, "poison");
+        this.duration = mlc.getInteger(new String[]{"duration", "d"}, 1);
+        this.level = mlc.getInteger(new String[]{"level", "l"}, 1);
+        this.stackingMode = mlc.getEnum(new String[]{"stackingmode", "sm", "s"}, StackingModes.class, StackingModes.NORMAL);
     }
 
     @Override
     public SkillResult castAtEntity(SkillMetadata data, AbstractEntity target) {
         CustomEffectType type = EffectRegistry.getById(effectName);
-        if(type == null) {
+        if (type == null) {
             return SkillResult.ERROR;
         }
         LivingEntity entity = (LivingEntity) target.getBukkitEntity();

@@ -18,6 +18,10 @@ public abstract class CustomEffectType {
     public static CustomEffectType SPIN;
     public static CustomEffectType ANGER;
     public static CustomEffectType REVERSE;
+    public static CustomEffectType SACRIFICE;
+    public static CustomEffectType TAUNT;
+    public static CustomEffectType COMBUST;
+    public static CustomEffectType SHIELD;
 
 
     public static void initializeStaticFields() {
@@ -32,6 +36,11 @@ public abstract class CustomEffectType {
         SPIN = EffectRegistry.getById("spin");
         ANGER = EffectRegistry.getById("anger");
         REVERSE = EffectRegistry.getById("reverse");
+        SACRIFICE = EffectRegistry.getById("sacrifice");
+        TAUNT = EffectRegistry.getById("taunt");
+        COMBUST = EffectRegistry.getById("combust");
+        SHIELD = EffectRegistry.getById("shield");
+        
     }
 
     public CustomEffectType(String id) {

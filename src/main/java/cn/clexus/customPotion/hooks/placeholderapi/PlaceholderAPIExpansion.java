@@ -47,26 +47,26 @@ public class PlaceholderAPIExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         String[] param = params.split("_");
-        if (param.length>=3) {
+        if (param.length >= 3) {
             LivingEntity p;
-            String type = param[param.length-1];
-            String id = param[param.length-2];
+            String type = param[param.length - 1];
+            String id = param[param.length - 2];
             String name = String.join("_", Arrays.copyOfRange(param, 0, param.length - 2));
-            if(name.equals("me")){
+            if (name.equals("me")) {
                 p = player.isOnline() ? player.getPlayer() : null;
-            }else{
+            } else {
                 p = Bukkit.getPlayer(name);
-                if(p==null){
-                    try{
+                if (p == null) {
+                    try {
                         p = (LivingEntity) Bukkit.getEntity(UUID.fromString(name));
-                    }catch(IllegalArgumentException ignored){
+                    } catch (IllegalArgumentException ignored) {
                     }
                 }
             }
-            if(p!=null){
+            if (p != null) {
                 List<CustomEffect> effectList = PotionManager.getAllEffects(p);
                 for (CustomEffect effect : effectList) {
-                    if (effect.isHidden()||effect.isFrozen()) continue;
+                    if (effect.isHidden()) continue;
                     if (effect.getType().getId().equals(id) || effect.getType().getDisplayName().equals(id)) {
                         switch (type) {
                             case "duration":

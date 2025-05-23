@@ -1,210 +1,265 @@
 package cn.clexus.customPotion.managers;
 
-import cn.clexus.customPotion.events.CustomPotionAddEvent;
-import cn.clexus.customPotion.events.CustomPotionApplyEvent;
-import cn.clexus.customPotion.events.CustomPotionRemoveEvent;
+import cn.clexus.customPotion.CustomPotion;
 import cn.clexus.customPotion.effects.CustomEffect;
 import cn.clexus.customPotion.effects.CustomEffectType;
 import cn.clexus.customPotion.effects.StackingModes;
+import cn.clexus.customPotion.events.CustomPotionAddEvent;
+import cn.clexus.customPotion.events.CustomPotionApplyEvent;
+import cn.clexus.customPotion.events.CustomPotionRemoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PotionManager {
-    private static final Map<UUID, List<CustomEffect>> activeEffects = new HashMap<>();
-    public static void addEffect(LivingEntity entity, CustomEffect effect, StackingModes stackingMode) {
-        CustomPotionAddEvent event = new CustomPotionAddEvent(entity,effect,stackingMode);
-        Bukkit.getPluginManager().callEvent(event);
-        if(!event.isCancelled()) {
-            entity = event.getEntity();
-            effect = event.getEffect();
-            stackingMode = event.getMode();
-        }else return;
-        UUID uuid = entity.getUniqueId();
-        activeEffects.putIfAbsent(uuid, new ArrayList<>());
-        List<CustomEffect> effects = activeEffects.get(uuid);
+    private static final Map<UUID, Map<CustomEffectType, List<CustomEffect>>> activeEffects = new ConcurrentHashMap<>();
 
+    public static void addEffect(LivingEntity entity, CustomEffect effect, StackingModes stackingMode) {
+        // 事件处理
+        CustomPotionAddEvent event = new CustomPotionAddEvent(entity, effect, stackingMode);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        entity = event.getEntity();
+        effect = event.getEffect();
+        stackingMode = event.getMode();
+
+        UUID uuid = entity.getUniqueId();
+        // 初始化数据结构
+        activeEffects.putIfAbsent(uuid, new ConcurrentHashMap<>());
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(uuid);
+
+        CustomEffectType effectType = effect.getType();
+        entityEffects.putIfAbsent(effectType, new CopyOnWriteArrayList<>());
+        List<CustomEffect> effects = entityEffects.get(effectType);
+
+        // 处理效果叠加
         boolean replaced = false;
         for (int i = 0; i < effects.size(); i++) {
             CustomEffect current = effects.get(i);
-            if (current.getType().equals(effect.getType())) {
-                switch (stackingMode) {
-                    case NORMAL:
-                        if (effect.getAmplifier() > current.getAmplifier()) {
-                            current.setHidden(true);
-                            effects.set(i, effect);
-                            replaced = true;
-                        } else if (effect.getDuration() > current.getDuration()) {
-                            effect.setHidden(true);
-                            effects.add(effect);
-                            replaced = true;
-                        }
-                        break;
-                    case REPLACE:
+            switch (stackingMode) {
+                case NORMAL:
+                    if (effect.getAmplifier() > current.getAmplifier()) {
+                        current.setHidden(true);
                         effects.set(i, effect);
                         replaced = true;
-                        break;
-                    case ADD_ALL:
-                        current.setDuration(current.getDuration() + effect.getDuration());
-                        current.setAmplifier(Math.max(current.getAmplifier(), effect.getAmplifier()));
+                    } else if (effect.getDuration() > current.getDuration()) {
+                        effect.setHidden(true);
+                        effects.add(effect);
                         replaced = true;
-                        break;
-                    case ADD_TIME:
-                        current.setDuration(current.getDuration() + effect.getDuration());
-                        replaced = true;
-                        break;
-                    case ADD_AMPLIFIER:
-                        current.setAmplifier(current.getAmplifier() + effect.getAmplifier());
-                        replaced = true;
-                        break;
-                }
-                break;
+                    }
+                    break;
+                case REPLACE:
+                    effects.set(i, effect);
+                    replaced = true;
+                    break;
+                case ADD_ALL:
+                    current.setDuration(current.getDuration() + effect.getDuration());
+                    current.setAmplifier(Math.max(current.getAmplifier(), effect.getAmplifier()));
+                    replaced = true;
+                    break;
+                case ADD_TIME:
+                    current.setDuration(current.getDuration() + effect.getDuration());
+                    replaced = true;
+                    break;
+                case ADD_AMPLIFIER:
+                    current.setAmplifier(current.getAmplifier() + effect.getAmplifier());
+                    replaced = true;
+                    break;
             }
+            if (replaced) break;
         }
 
+        // 如果未替换现有效果，添加新效果
         if (!replaced) {
             effects.add(effect);
         }
     }
 
     public static boolean hasEffect(LivingEntity entity, CustomEffectType type) {
-        return !getEffects(entity, type).isEmpty();
+        if (entity == null) return false;
+
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(entity.getUniqueId());
+        if (entityEffects == null) return false;
+
+        List<CustomEffect> effects = entityEffects.get(type);
+        return effects != null && !effects.isEmpty();
     }
 
     public static List<CustomEffect> getEffects(LivingEntity entity, CustomEffectType effectType) {
-        List<CustomEffect> effects = activeEffects.get(entity.getUniqueId());
-        List<CustomEffect> matchingEffects = new ArrayList<>();
+        if (entity == null) return Collections.emptyList();
 
-        if (effects != null) {
-            for (CustomEffect effect : effects) {
-                if (effect.getType().equals(effectType)) {
-                    matchingEffects.add(effect);
-                }
-            }
-        }
-        return matchingEffects;
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(entity.getUniqueId());
+        if (entityEffects == null) return Collections.emptyList();
+
+        List<CustomEffect> effects = entityEffects.get(effectType);
+        return effects != null ? new ArrayList<>(effects) : Collections.emptyList();
     }
 
     public static List<CustomEffect> getAllEffects(LivingEntity entity) {
-        if(activeEffects.get(entity.getUniqueId())==null){
-            return new ArrayList<>();
-        }else return activeEffects.get(entity.getUniqueId());
+        if (entity == null) return Collections.emptyList();
+
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(entity.getUniqueId());
+        if (entityEffects == null) return Collections.emptyList();
+
+        List<CustomEffect> allEffects = new ArrayList<>();
+        entityEffects.values().forEach(allEffects::addAll);
+        return allEffects;
     }
 
     public static void startEffectProcessor(JavaPlugin plugin) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Iterator<Map.Entry<UUID, List<CustomEffect>>> iterator = activeEffects.entrySet().iterator();
+                Iterator<Map.Entry<UUID, Map<CustomEffectType, List<CustomEffect>>>> iterator = activeEffects.entrySet().iterator();
 
                 while (iterator.hasNext()) {
-                    Map.Entry<UUID, List<CustomEffect>> entry = iterator.next();
-                    final LivingEntity[] entity = {(LivingEntity) Bukkit.getEntity(entry.getKey())};
+                    Map.Entry<UUID, Map<CustomEffectType, List<CustomEffect>>> entry = iterator.next();
+                    LivingEntity entity = getLivingEntity(entry.getKey());
 
-                    if (entity[0] == null || entity[0].isDead()) {
-                        iterator.remove(); // 实体不存在或死亡时移除效果
+                    if (entity == null || entity.isDead()) {
+                        iterator.remove(); // 移除不存在或已死亡实体的效果
                         continue;
                     }
 
-                    List<CustomEffect> effects = entry.getValue();
+                    Map<CustomEffectType, List<CustomEffect>> typeEffectsMap = entry.getValue();
+                    boolean entityHasEffects = false;
 
-                    // 遍历效果并应用逻辑
-                    effects.removeIf(effect -> {
-                        if (entity[0].isDead()) {
-                            effect.freeze();
-                            return false;
+                    // 处理每种效果类型
+                    Iterator<Map.Entry<CustomEffectType, List<CustomEffect>>> typeIterator = typeEffectsMap.entrySet().iterator();
+                    while (typeIterator.hasNext()) {
+                        Map.Entry<CustomEffectType, List<CustomEffect>> typeEntry = typeIterator.next();
+                        List<CustomEffect> effects = typeEntry.getValue();
+
+                        // 处理效果
+                        effects.removeIf(effect -> processEffect(entity, effect, effects));
+
+                        if (effects.isEmpty()) {
+                            typeIterator.remove(); // 移除空效果类型
+                        } else {
+                            entityHasEffects = true; // 标记实体仍有效果
                         }
+                    }
 
-                        if (!effect.isFrozen() && !effect.isHidden()) {
-                            CustomPotionApplyEvent event = new CustomPotionApplyEvent(entity[0],effect);
-                            Bukkit.getPluginManager().callEvent(event);
-                            if (!event.isCancelled()) {
-                                entity[0] = event.getEntity();
-                                effect = event.getEffect();
-                            }else return false;
-                            effect.apply(entity[0]); // 应用当前效果逻辑
-                            if (!effect.tick()) { // 持续时间耗尽
-                                // 当前效果结束，检查是否有隐藏的同类型效果
-                                for (CustomEffect hiddenEffect : effects) {
-                                    if (hiddenEffect.isHidden() && hiddenEffect.getType().equals(effect.getType())) {
-                                        hiddenEffect.setHidden(false); // 恢复隐藏效果
-                                        break;
-                                    }
-                                }
-                                effect.remove(entity[0]);
-                                return true; // 移除当前效果
-                            }
-                        }
-                        return false; // 保留效果
-                    });
-
-                    if (effects.isEmpty()) {
-                        iterator.remove(); // 如果实体无效果，则从 activeEffects 移除
+                    if (!entityHasEffects) {
+                        iterator.remove(); // 移除无效果实体
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0, 1); // 每 tick 执行
+        }.runTaskTimer(plugin, 0, 1); // 每tick执行
     }
 
+    private static boolean processEffect(LivingEntity entity, CustomEffect effect, List<CustomEffect> effects) {
+        if (effect.isHidden()) return false;
+
+        // 应用效果事件
+        CustomPotionApplyEvent event = new CustomPotionApplyEvent(entity, effect);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
+
+        // 应用效果
+        effect.apply(entity);
+
+        // 检查效果持续时间
+        if (!effect.tick()) { // 效果持续时间结束
+            // 恢复隐藏的同类型效果
+            for (CustomEffect hiddenEffect : effects) {
+                if (hiddenEffect.isHidden() && hiddenEffect.getType().equals(effect.getType())) {
+                    hiddenEffect.setHidden(false);
+                    break;
+                }
+            }
+
+            // 移除当前效果
+            effect.setHidden(true);
+            Bukkit.getScheduler().runTaskLater(CustomPotion.plugin, () -> effect.remove(entity), 1);
+            return true; // 移除此效果
+        }
+
+        return false; // 保留效果
+    }
 
     public static void clearEffects(UUID uuid, CustomEffectType effectType) {
-        List<CustomEffect> effects = activeEffects.get(uuid);
-        LivingEntity entity = (LivingEntity) Bukkit.getEntity(uuid);
-        if (effects != null) {
-            effects.removeIf(effect -> {
-                if (effect.getType().equals(effectType)) {
-                    CustomPotionRemoveEvent event = new CustomPotionRemoveEvent(entity,effect);
-                    Bukkit.getPluginManager().callEvent(event);
-                    if(event.isCancelled()) {
-                        return false;
-                    }
-                    effect.remove(entity);
-                    return true;
-                }
-                return false;
-            });
+        LivingEntity entity = getLivingEntity(uuid);
+        if (entity == null) return;
 
-            // 如果列表为空，则移除实体的效果记录
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(uuid);
+        if (entityEffects == null) return;
+
+        List<CustomEffect> effects = entityEffects.get(effectType);
+        if (effects != null) {
+            removeEffects(entity, effects);
+
             if (effects.isEmpty()) {
-                activeEffects.remove(uuid);
+                entityEffects.remove(effectType);
+
+                if (entityEffects.isEmpty()) {
+                    activeEffects.remove(uuid);
+                }
             }
         }
     }
 
     public static void clearEffects(UUID uuid) {
-        List<CustomEffect> effects = activeEffects.get(uuid);
-        LivingEntity entity = (LivingEntity) Bukkit.getEntity(uuid);
+        LivingEntity entity = getLivingEntity(uuid);
+        if (entity == null) return;
 
-        if (effects != null) {
-            // 迭代移除未被取消的效果
-            effects.removeIf(effect -> {
-                CustomPotionRemoveEvent event = new CustomPotionRemoveEvent(entity, effect);
-                Bukkit.getPluginManager().callEvent(event);
+        Map<CustomEffectType, List<CustomEffect>> entityEffects = activeEffects.get(uuid);
+        if (entityEffects != null) {
+            // 清理所有效果
+            for (List<CustomEffect> effects : new ArrayList<>(entityEffects.values())) {
+                removeEffects(entity, effects);
+            }
 
-                if (event.isCancelled()) {
-                    return false; // 如果事件被取消，则不移除效果
-                }
-
-                effect.remove(entity); // 调用效果的 remove 方法
-                return true; // 移除效果
-            });
-
-            // 如果列表为空，则从 activeEffects 中移除实体的效果记录
-            if (effects.isEmpty()) {
+            // 移除空记录
+            entityEffects.values().removeIf(List::isEmpty);
+            if (entityEffects.isEmpty()) {
                 activeEffects.remove(uuid);
             }
         }
     }
 
+    private static void removeEffects(LivingEntity entity, List<CustomEffect> effects) {
+        if (entity == null || effects == null) return;
+
+        effects.removeIf(effect -> {
+            CustomPotionRemoveEvent event = new CustomPotionRemoveEvent(entity, effect);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return false;
+
+            effect.remove(entity);
+            return true;
+        });
+    }
+
     public static void clearEffects(LivingEntity entity, CustomEffectType effectType) {
+        if (entity == null) return;
         clearEffects(entity.getUniqueId(), effectType);
     }
 
     public static void clearEffects(LivingEntity entity) {
+        if (entity == null) return;
         clearEffects(entity.getUniqueId());
     }
 
+    private static LivingEntity getLivingEntity(UUID uuid) {
+        LivingEntity entity = (LivingEntity) Bukkit.getEntity(uuid);
+        if (entity == null && Bukkit.getPlayer(uuid) != null) {
+            entity = Bukkit.getPlayer(uuid); // 处理玩家死亡情况
+        }
+        return entity;
+    }
+
+    public static void shutdown() {
+        // 清理所有效果
+        for (UUID uuid : new HashSet<>(activeEffects.keySet())) {
+            clearEffects(uuid);
+        }
+        activeEffects.clear();
+    }
 }

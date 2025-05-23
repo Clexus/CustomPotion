@@ -25,9 +25,9 @@ public class MythicMobsEvents implements Listener {
     }
 
     @EventHandler
-    public void onMythicMechanicLoad(MythicMechanicLoadEvent event)	{
-        if(event.getMechanicName().equalsIgnoreCase("CustomEffect")||event.getMechanicName().equalsIgnoreCase("ce")){
-            event.register(new CustomEffectMechanic(event.getContainer().getManager(),event.getContainer().getFile(),event.getConfig().getLine(), event.getConfig()));
+    public void onMythicMechanicLoad(MythicMechanicLoadEvent event) {
+        if (event.getMechanicName().equalsIgnoreCase("CustomEffect") || event.getMechanicName().equalsIgnoreCase("ce")) {
+            event.register(new CustomEffectMechanic(event.getContainer().getManager(), event.getContainer().getFile(), event.getConfig().getLine(), event.getConfig()));
         }
     }
 
@@ -36,28 +36,28 @@ public class MythicMobsEvents implements Listener {
         Entity entity = event.getEntity();
         CustomEffect effect = event.getEffect();
         String effectID = event.getEffect().getType().getId();
-        if(mobManager.isMythicMob(entity)) {
+        if (mobManager.isMythicMob(entity)) {
             ActiveMob mob = mobManager.getActiveMob(entity.getUniqueId()).orElse(null);
-            if(mob != null) {
+            if (mob != null) {
                 MythicConfig section = mob.getType().getConfig().getNestedConfig("CustomEffects");
-                if(section != null) {
+                if (section != null) {
                     List<String> immuneList = section.getStringList("Immune");
-                    if(immuneList != null) {
+                    if (immuneList != null) {
                         for (String type : immuneList) {
-                            if(type.equalsIgnoreCase(effectID)) {
+                            if (type.equalsIgnoreCase(effectID)) {
                                 event.setCancelled(true);
                                 return;
                             }
                         }
                     }
                     List<String> multiplierList = section.getStringList("Multiplier");
-                    if(multiplierList != null) {
+                    if (multiplierList != null) {
                         for (String multiplier : multiplierList) {
                             String[] parts = multiplier.split(" ");
                             if (parts.length == 3) {
                                 String effectType = parts[0];
                                 int durationMultiplier = Math.max(Integer.parseInt(parts[1]), 0);
-                                int levelMultiplier = Math.max(Integer.parseInt(parts[2]),0);
+                                int levelMultiplier = Math.max(Integer.parseInt(parts[2]), 0);
 
                                 if (effectType.equalsIgnoreCase(effectID)) {
                                     effect.setDuration(durationMultiplier * effect.getDuration());
