@@ -21,7 +21,9 @@
 
 命令：
 /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态/来源]
+
 /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态] [来源]
+
 /customeffect clear <UUID/玩家名> [类型]
 
 叠加状态: 
