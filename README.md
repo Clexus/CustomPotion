@@ -20,6 +20,7 @@
 - 活力(Vigor): 攻击时增加`等级`点伤害
 
 命令：
+
 /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态/来源]
 
 /customeffect modify <UUID/玩家名> <类型> [时长] [等级] [叠加状态] [来源]
