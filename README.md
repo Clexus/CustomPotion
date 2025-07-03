@@ -36,6 +36,26 @@
 
 来源可为玩家名或UUID
 
+MythicMobs:
+- 技能:
+  - customeffect(ce): ce{effect=`药水效果ID`;duration=1;level=1;stackingmode=NORMAL}
+    - effect(e/type/t): 药水效果ID
+    - level(l): 等级
+    - duration(d): 持续时间(刻)
+    - stackingmode(sm/s): 叠加状态
+- 自定义选项:
+```yaml
+TestMob:
+  Type: Zombie
+  CustomEffects:
+    Immune:
+    - vigor
+    Multiplier:
+    - poison 10 1
+```
+Immune代表怪物免疫的效果
+Multiplier下是药水效果倍增器，第一个数字代表时长，第二个代表等级，例子中是每次受到剧毒效果时长翻十倍
+
 PAPI变量：
 
 `%custompotion_<玩家名/实体UUID/me>_<药水ID>_<duration/level/multiplier/display/displayname/source/sourceuuid>%`
