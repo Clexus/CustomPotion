@@ -37,7 +37,8 @@
 来源可为玩家名或UUID
 
 PAPI变量：
-%custompotion_<玩家名/实体UUID/me>_<药水ID>_<duration/level/multiplier/display/displayname/source/sourceuuid>%
+
+`%custompotion_<玩家名/实体UUID/me>_<药水ID>_<duration/level/multiplier/display/displayname/source/sourceuuid>%`
 
 me代表解析自己，玩家名支持下划线，做了专门处理
 
