@@ -1,4 +1,5 @@
 下载请点右边的release
+
 前置插件:PacketEvents(必须), MythicMobs(可选), PlaceholderAPI(可选)
 
 模仿原版药水机制的自定义药水插件，添加了一些药水效果：
