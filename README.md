@@ -43,6 +43,7 @@ source获取的是来源实体显示名
 sourceuuid获取的是来源实体uuid
 
 配置文件：
+
 config.yml:
 ```yaml
 #Do message returned by command respect the sendCommandFeedback gamerule?
