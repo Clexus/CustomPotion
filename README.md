@@ -38,11 +38,17 @@
 
 PAPI变量：
 %custompotion_<玩家名/实体UUID/me>_<药水ID>_<duration/level/multiplier/display/displayname/source/sourceuuid>%
+
 me代表解析自己，玩家名支持下划线，做了专门处理
+
 duration获取的是药水剩余时间(刻)
+
 level和multiplier获取的都是药水等级
+
 display和displayname获取的都是药水显示名
+
 source获取的是来源实体显示名
+
 sourceuuid获取的是来源实体uuid
 
 配置文件：
